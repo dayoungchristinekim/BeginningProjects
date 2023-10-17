@@ -1,2 +1,46 @@
 #!/bin/bash
+#Program purpose:
+#Determine directories in Master Folder that do not exist in Subset Folder, and copy onto tertiary MissingPieces Folder.
+
+#Creating the tertiary and currently nonexistent folder called "MissingPieces"
+mkdir -p /Users/dayoungkim/Desktop/MissingPieces
+
+#Make list of files that are in the Master Folder
+X=$(ls /Users/dayoungkim/Desktop/NLP-EMR-Pipeline-main)
+Array=($X)
+for i in ${Array[@]}; do
+        echo "$i"
+done
+
+#Make list of files that are in the Subset Folder
+X=$(ls /Users/dayoungkim/Desktop/SubsetFolder)
+Array2=($X)
+for i in ${Array2[@]}; do
+        echo "$i"
+done
+
+#Define the exists_in_list function
+exists_in_list() {
+    local search_element="$1"
+    shift
+    local list=("$@")
+    for element in "${list[@]}"; do
+        if [[ "$element" == "$search_element" ]]; then
+            return 0  # Element found in the list
+        fi
+    done
+    return 1  # Element not found in the list
+}
+
+
+#Examine subset folder against array of directories (masterlist) contained in Master Folder
+for item in ${Array[@]}; do
+        if exists_in_list "$item" "${Array2[@]}"; then
+                continue
+        else
+                mkdir -p /Users/dayoungkim/Desktop/MissingPieces/$item
+                cp -r /Users/dayoungkim/Desktop/NLP-EMR-Pipeline-main/$item /Users/dayoungkim/Desktop/MissingPieces/$item
+        fi
+done
+
 
